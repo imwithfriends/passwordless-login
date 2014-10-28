@@ -68,4 +68,4 @@ Passwordless Authentication dose not replace the default login functionality in 
 == Changelog ==
 
 = 1.0 =
-Initial version. Added a passwordless login form as a shortcode. 
+Initial version. Added a passwordless login form as a shortcode.
