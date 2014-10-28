@@ -85,6 +85,7 @@ function wpa_basic_info_content() {
 				<div><p><?php _e('Drag and drop to reorder / remove default user profile fields.', 'passwordless'); ?></p></div>
 				<div><p><?php _e('Allow users to log in with their username or email.', 'passwordless'); ?></p></div>
 				<div><p><?php _e('Enforce minimum password length and minimum password strength.', 'passwordless'); ?></p></div>
+				<div><p><?php _e('Custom redirects, including that of the default WordPress login (available in the Pro version only) ', 'passwordless'); ?></p></div>
 			</div>
 			<p><a href="https://wordpress.org/plugins/profile-builder/" class="button button-primary button-large"><?php _e( 'Learn More About Profile Builder', 'passwordless' ); ?></a></p>
 		</div>
@@ -320,3 +321,19 @@ function wpa_curpageurl() {
 
 	return $pageURL;
 }
+
+
+/**
+ * Add notices on plugin activation.
+ *
+ * @since v.1.0
+ *
+ * @return string
+ */
+
+include_once("inc/wpa.class.notices.php");
+$learn_more_notice = new WPA_Add_Notices(
+	'wpa_learn_more',
+	sprintf( __( '<p>Use [passwordless-login] shortcode in your pages or widgets. %1$sLearn more.%2$s  %3$sDismiss%4$s</p>', 'profilebuilder'), "<a href='users.php?page=passwordless-auth&wpa_learn_more_dismiss_notification=0'>", "</a>", "<a href='". add_query_arg( 'wpa_learn_more_dismiss_notification', '0' ) ."' class='wpa-dismiss-notification' style='float:right;margin-left:20px;'> ", "</a>" ),
+	'updated',	'',	''
+);
