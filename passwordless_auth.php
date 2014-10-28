@@ -78,7 +78,7 @@ function wpa_basic_info_content() {
 		</div>
 		<hr/>
 		<div>
-			<h3><?php _e( 'Take control of the login and registration process.', 'passwordless' );?></h3>
+			<h3><?php _e( 'Take control of the login and registration process with Profile Builder', 'passwordless' );?></h3>
 			<p><?php _e( 'Improve upon Passwordless Authentication using the free <a href="https://wordpress.org/plugins/profile-builder/">Profile Builder</a> plugin:', 'passwordless' ); ?></p>
 			<div class="wpa-row wpa-3-col">
 				<div><p><?php _e('Front-End registration, edit profile and login forms.', 'passwordless'); ?></p></div>
@@ -152,8 +152,8 @@ function wpa_front_end_login(){
 	?>
 	<form name="wpaloginform" id="wpaloginform" action="" method="post">
 		<p>
-			<label for="user_email_username"><?php _e('Login with email or username') ?><br />
-			<input type="text" name="user_email_username" id="user_email_username" class="input" value="<?php echo esc_attr( $account ); ?>" size="25" /></label>
+			<label for="user_email_username"><?php _e('Login with email or username') ?></label><br />
+			<input type="text" name="user_email_username" id="user_email_username" class="input" value="<?php echo esc_attr( $account ); ?>" size="25" />
 			<input type="submit" name="wpa-submit" id="wpa-submit" class="button-primary" value="<?php esc_attr_e('Log In'); ?>" />
 		</p>
 		<?php do_action('wpa_login_form'); ?>
