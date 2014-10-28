@@ -85,7 +85,6 @@ function wpa_basic_info_content() {
 				<div><p><?php _e('Drag and drop to reorder / remove default user profile fields.', 'passwordless'); ?></p></div>
 				<div><p><?php _e('Allow users to log in with their username or email.', 'passwordless'); ?></p></div>
 				<div><p><?php _e('Enforce minimum password length and minimum password strength.', 'passwordless'); ?></p></div>
-				<div><p><?php _e('Custom redirects, including that of the default WordPress login (available in the Pro version only) ', 'passwordless'); ?></p></div>
 			</div>
 			<p><a href="https://wordpress.org/plugins/profile-builder/" class="button button-primary button-large"><?php _e( 'Learn More About Profile Builder', 'passwordless' ); ?></a></p>
 		</div>
