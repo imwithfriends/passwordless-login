@@ -63,6 +63,7 @@ function wpa_basic_info_content() {
 		<div class="wpa-badge <?php echo PASSWORDLESS_AUTH_VERSION; ?>"><?php printf( __( 'Version %s' ), PASSWORDLESS_AUTH_VERSION ); ?></div>
 		<h1><?php printf( __( '<strong>Passwordless Authentication</strong> <small>v.</small>%s', 'passwordless' ), PASSWORDLESS_AUTH_VERSION ); ?></h1>
 		<p class="wpa-info-text"><?php printf( __( 'A front-end login form without a password.', 'passwordless' ) ); ?></p>
+		<p><strong style="font-size: 30px; vertical-align: middle"><?php echo get_option('wpa_total_logins', '0'); ?></strong> successful logins without passwords.</p>
 		<hr />
 		<h2 class="wpa-callout"><?php _e( 'One time password for WordPress', 'passwordless' ); ?></h2>
 		<div class="wpa-row wpa-2-col">
@@ -275,6 +276,8 @@ function wpa_autologin_via_url(){
 		} else {
 			wp_set_auth_cookie( $uid );
 			delete_transient( 'wpa_' . $uid );
+			$total_logins = get_option( 'wpa_total_logins', 0);
+			update_option( 'wpa_total_logins', $total_logins + 1);
 			wp_redirect( $current_page_url );
 			exit;
 		}
