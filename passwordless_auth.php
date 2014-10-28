@@ -1,8 +1,8 @@
 <?php
 /**
-* Plugin Name: Passwordless Authentication
+* Plugin Name: Passwordless Login
 * Plugin URI: http://www.cozmsolabs.com
-* Description: Shortcode base login form. Enter an email/username and get a one time link via email that will automatically log you in. 
+* Description: Shortcode based login form. Enter an email/username and get link via email that will automatically log you in.
 * Version: 1.0
 * Author: Cozmoslabs, sareiodata
 * Author URI: http:/www.cozmoslabs.com
@@ -32,7 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  *
  *
  */
-define( 'PASSWORDLESS_AUTH_VERSION', '1.0' );
+define( 'PASSWORDLESS_LOGIN_VERSION', '1.0' );
 define( 'WPA_PLUGIN_DIR', WP_PLUGIN_DIR . '/' . dirname( plugin_basename( __FILE__ ) ) );
 define( 'WPA_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'WPA_TRANSLATE_DIR', WPA_PLUGIN_DIR.'/translation' );
@@ -46,7 +46,7 @@ define( 'WPA_TRANSLATE_DOMAIN', 'passwordless' );
  * @return void
  */
 function wpa_register_basic_info_submenu_page() {
-	add_submenu_page( 'users.php', __( 'Passwordless Authentication', 'passwordless' ), __( 'Passwordless Auth', 'passwordless' ), 'manage_options', 'passwordless-auth', 'wpa_basic_info_content' );
+	add_submenu_page( 'users.php', __( 'Passwordless Login', 'passwordless' ), __( 'Passwordless Auth', 'passwordless' ), 'manage_options', 'passwordless-login', 'wpa_basic_info_content' );
 }
 add_action( 'admin_menu', 'wpa_register_basic_info_submenu_page', 2 );
 
@@ -60,9 +60,10 @@ add_action( 'admin_menu', 'wpa_register_basic_info_submenu_page', 2 );
 function wpa_basic_info_content() {
 ?>
 	<div class="wrap wpa-wrap wpa-info-wrap">
-		<div class="wpa-badge <?php echo PASSWORDLESS_AUTH_VERSION; ?>"><?php printf( __( 'Version %s' ), PASSWORDLESS_AUTH_VERSION ); ?></div>
-		<h1><?php printf( __( '<strong>Passwordless Authentication</strong> <small>v.</small>%s', 'passwordless' ), PASSWORDLESS_AUTH_VERSION ); ?></h1>
+		<div class="wpa-badge <?php echo PASSWORDLESS_LOGIN_VERSION; ?>"><?php printf( __( 'Version %s' ), PASSWORDLESS_LOGIN_VERSION ); ?></div>
+		<h1><?php printf( __( '<strong>Passwordless Login</strong> <small>v.</small>%s', 'passwordless' ), PASSWORDLESS_LOGIN_VERSION ); ?></h1>
 		<p class="wpa-info-text"><?php printf( __( 'A front-end login form without a password.', 'passwordless' ) ); ?></p>
+		<p><strong style="font-size: 30px; vertical-align: middle"><?php echo get_option('wpa_total_logins', '0'); ?></strong> successful logins without passwords.</p>
 		<hr />
 		<h2 class="wpa-callout"><?php _e( 'One time password for WordPress', 'passwordless' ); ?></h2>
 		<div class="wpa-row wpa-2-col">
@@ -78,7 +79,7 @@ function wpa_basic_info_content() {
 		</div>
 		<hr/>
 		<div>
-			<h3><?php _e( 'Take control of the login and registration process.', 'passwordless' );?></h3>
+			<h3><?php _e( 'Take control of the login and registration process with Profile Builder', 'passwordless' );?></h3>
 			<p><?php _e( 'Improve upon Passwordless Authentication using the free <a href="https://wordpress.org/plugins/profile-builder/">Profile Builder</a> plugin:', 'passwordless' ); ?></p>
 			<div class="wpa-row wpa-3-col">
 				<div><p><?php _e('Front-End registration, edit profile and login forms.', 'passwordless'); ?></p></div>
@@ -101,7 +102,7 @@ function wpa_basic_info_content() {
  * @return void
  */
 function wpa_print_script( $hook ){
-	if ( ( $hook == 'users_page_passwordless-auth' ) ){
+	if ( ( $hook == 'users_page_passwordless-login' ) ){
 		wp_enqueue_style( 'wpa-back-end-style', WPA_PLUGIN_URL . 'assets/style-back-end.css', false, PROFILE_BUILDER_VERSION );
 	}
 }
@@ -152,8 +153,8 @@ function wpa_front_end_login(){
 	?>
 	<form name="wpaloginform" id="wpaloginform" action="" method="post">
 		<p>
-			<label for="user_email_username"><?php _e('Login with email or username') ?><br />
-			<input type="text" name="user_email_username" id="user_email_username" class="input" value="<?php echo esc_attr( $account ); ?>" size="25" /></label>
+			<label for="user_email_username"><?php _e('Login with email or username') ?></label><br />
+			<input type="text" name="user_email_username" id="user_email_username" class="input" value="<?php echo esc_attr( $account ); ?>" size="25" />
 			<input type="submit" name="wpa-submit" id="wpa-submit" class="button-primary" value="<?php esc_attr_e('Log In'); ?>" />
 		</p>
 		<?php do_action('wpa_login_form'); ?>
@@ -275,6 +276,8 @@ function wpa_autologin_via_url(){
 		} else {
 			wp_set_auth_cookie( $uid );
 			delete_transient( 'wpa_' . $uid );
+			$total_logins = get_option( 'wpa_total_logins', 0);
+			update_option( 'wpa_total_logins', $total_logins + 1);
 			wp_redirect( $current_page_url );
 			exit;
 		}
@@ -320,3 +323,19 @@ function wpa_curpageurl() {
 
 	return $pageURL;
 }
+
+
+/**
+ * Add notices on plugin activation.
+ *
+ * @since v.1.0
+ *
+ * @return string
+ */
+
+include_once("inc/wpa.class.notices.php");
+$learn_more_notice = new WPA_Add_Notices(
+	'wpa_learn_more',
+	sprintf( __( '<p>Use [passwordless-login] shortcode in your pages or widgets. %1$sLearn more.%2$s  %3$sDismiss%4$s</p>', 'profilebuilder'), "<a href='users.php?page=passwordless-login&wpa_learn_more_dismiss_notification=0'>", "</a>", "<a href='". add_query_arg( 'wpa_learn_more_dismiss_notification', '0' ) ."' class='wpa-dismiss-notification' style='float:right;margin-left:20px;'> ", "</a>" ),
+	'updated',	'',	''
+);
