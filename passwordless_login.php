@@ -103,7 +103,7 @@ function wpa_basic_info_content() {
  */
 function wpa_print_script( $hook ){
 	if ( ( $hook == 'users_page_passwordless-login' ) ){
-		wp_enqueue_style( 'wpa-back-end-style', WPA_PLUGIN_URL . 'assets/style-back-end.css', false, PROFILE_BUILDER_VERSION );
+		wp_enqueue_style( 'wpa-back-end-style', WPA_PLUGIN_URL . 'assets/style-back-end.css', false, PASSWORDLESS_LOGIN_VERSION );
 	}
 }
 add_action( 'admin_enqueue_scripts', 'wpa_print_script' );
