@@ -5,7 +5,7 @@ Donate link: http://www.cozmoslabs.com/wordpress-profile-builder/
 Tags: passwordless login, login, front-end login, login shortcode, custom login form, login without password, passwordless authentication
 Requires at least: 3.9
 Tested up to: 4.0
-Stable tag: 1.0
+Stable tag: 1.0.1
 
 
 Passwordless login form via a simple to use shortcode: [passwordless-login]
@@ -14,6 +14,8 @@ Passwordless login form via a simple to use shortcode: [passwordless-login]
 == Description ==
 
 Passwordless Login is a modern way of loggin into your WordPress site without the use of a password.
+
+Join the discussion here: http://www.cozmoslabs.com/31550-wordpress-passwordless-login/
 
 This is how it works:
 
@@ -28,6 +30,7 @@ You can use the shortcode [passwordless-login] in a page or widget.
 NOTE:
 
 Passwordless Authentication dose not replace the default login functionality in WordPress.
+Thanks go towards Tim Nash for reviewing the plugin from a security point of view. https://timnash.co.uk/
 
 
 == Installation ==
@@ -50,7 +53,7 @@ Passwordless Authentication dose not replace the default login functionality in 
 
 	Weak passwords are used every day by users. There are also people who user the same password across various services and websites. By using the Passwordless Login plugin your users will have one less password to worry about.
 
-= But what if my users don't want to login everytime via their email?  =
+= But what if my users don't want to login every time via their email?  =
 
 	You can extend the auth cookie expiration to something like 1 month or 3 months. (currently only possible via code; will be available in a future version). Also, you can offer Passwordless Login as an alternative login system and enforce stronger passwords on registration using <a href="http://wordpress.org/plugins/profile-builder/">Profile Builder plugin.</a>
 
@@ -60,12 +63,17 @@ Passwordless Authentication dose not replace the default login functionality in 
 
 
 == Screenshots ==
-1. Front End Passwordless Login Form : screenshot1.jpg
-2. Received Email with the token link: screenshot2.jpg
-3. Backend Info page for the plugin: screenshot3.jpg
+1. Front End Passwordless Login Form
+2. Received Email with the token link
+3. Backend Info page for the plugin
 
 
 == Changelog ==
 
 = 1.0 =
 Initial version. Added a passwordless login form as a shortcode.
+= 1.0.1 =
+Security fix: tokens are now hashed in the database.
+Security fix: sanitized the input fields data.
+Fix: no longer using transients. Now using user_meta with an expiration meta since transients are not to be trusted.
+Change: removed a br tag
