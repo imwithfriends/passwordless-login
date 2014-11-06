@@ -132,9 +132,9 @@ add_action( 'wp_print_styles', 'wpa_add_plugin_stylesheet' );
  */
 function wpa_front_end_login(){
 	ob_start();
-	$account = ( isset( $_POST['user_email_username']) ) ? $account = $_POST['user_email_username'] : false;
-	$nonce = ( isset( $_POST['nonce']) ) ? $nonce = $_POST['nonce'] : false;
-	$error_token = ( isset( $_GET['wpa_error_token']) ) ? $error_token = $_GET['wpa_error_token'] : false;
+	$account = ( isset( $_POST['user_email_username']) ) ? $account = sanitize_text_field( $_POST['user_email_username'] ) : false;
+	$nonce = ( isset( $_POST['nonce']) ) ? $nonce = sanitize_key( $_POST['nonce'] ) : false;
+	$error_token = ( isset( $_GET['wpa_error_token']) ) ? $error_token = sanitize_key( $_GET['wpa_error_token'] ) : false;
 
 	$sent_link = wpa_send_link($account, $nonce);
 
@@ -261,9 +261,9 @@ function wpa_generate_url( $email = false, $nonce = false ){
 add_action( 'init', 'wpa_autologin_via_url' );
 function wpa_autologin_via_url(){
 	if( isset( $_GET['token'] ) && isset( $_GET['uid'] ) && isset( $_GET['nonce'] ) ){
-		$uid = $_GET['uid'];
-		$token  = $_REQUEST['token'];
-		$nonce  = $_REQUEST['nonce'];
+		$uid = sanitize_key( $_GET['uid'] );
+		$token  = sanitize_key( $_REQUEST['token'] );
+		$nonce  = sanitize_key( $_REQUEST['nonce'] );
 
 		$token_transient = get_transient('wpa_' . $uid);
 
