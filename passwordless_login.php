@@ -242,7 +242,7 @@ function wpa_generate_url( $email = false, $nonce = false ){
 	}
 	/* get user id */
 	$user = get_user_by( 'email', $email );
-	$token = wpa_create_onetime_token( 'wpa_'.$user->ID );
+	$token = wpa_create_onetime_token( 'wpa_'.$user->ID, $user->ID  );
 
 	$arr_params = array( 'wpa_error_token', 'uid', 'token', 'nonce' );
 	$url = remove_query_arg( $arr_params, wpa_curpageurl() );
@@ -262,20 +262,25 @@ add_action( 'init', 'wpa_autologin_via_url' );
 function wpa_autologin_via_url(){
 	if( isset( $_GET['token'] ) && isset( $_GET['uid'] ) && isset( $_GET['nonce'] ) ){
 		$uid = sanitize_key( $_GET['uid'] );
-		$token  = sanitize_key( $_REQUEST['token'] );
+		$token  =  sanitize_key( $_REQUEST['token'] );
 		$nonce  = sanitize_key( $_REQUEST['nonce'] );
 
-		$token_transient = get_transient('wpa_' . $uid);
-
+		$hash_meta = get_user_meta( $uid, 'wpa_' . $uid, true);
+		$hash_meta_expiration = get_user_meta( $uid, 'wpa_' . $uid . '_expiration', true);
 		$arr_params = array( 'uid', 'token', 'nonce' );
 		$current_page_url = remove_query_arg( $arr_params, wpa_curpageurl() );
 
-		if ( ! hash_equals($token_transient, $token) || ! wp_verify_nonce( $nonce, 'wpa_passwordless_login_request' ) ){
+		$wp_hasher = new PasswordHash(8, TRUE);
+		$time = time();
+
+		if ( ! $wp_hasher->CheckPassword($token . $hash_meta_expiration, $hash_meta) || $hash_meta_expiration < $time || ! wp_verify_nonce( $nonce, 'wpa_passwordless_login_request' ) ){
 			wp_redirect( $current_page_url . '?wpa_error_token=true' );
 			exit;
 		} else {
 			wp_set_auth_cookie( $uid );
-			delete_transient( 'wpa_' . $uid );
+			delete_user_meta($uid, 'wpa_' . $uid );
+			delete_user_meta($uid, 'wpa_' . $uid . '_expiration');
+
 			$total_logins = get_option( 'wpa_total_logins', 0);
 			update_option( 'wpa_total_logins', $total_logins + 1);
 			wp_redirect( $current_page_url );
@@ -292,12 +297,25 @@ function wpa_autologin_via_url(){
  *
  * @return string
  */
-function wpa_create_onetime_token( $action = -1 ) {
+function wpa_create_onetime_token( $action = -1, $user_id = 0 ) {
 	$time = time();
-	$string = '_wpa_nonce_' . $action . $time;
-	$hash  = wp_hash( $string );
-	set_transient( $action , $hash, 60*10 ); // adjust the lifetime of the transient. Currently 10 min.
-	return $hash;
+
+	// random salt
+	$key = wp_generate_password( 20, false );
+	$wp_hasher = new PasswordHash(8, TRUE);
+	$string = $key . $action . $time;
+
+	// we're sending this to the user
+	$token  = wp_hash( $string );
+	$expiration = $time + 60*10;
+	$expiration_action = $action . '_expiration';
+
+	// we're storing a combination of token and expiration
+	$stored_hash = $wp_hasher->HashPassword( $token . $expiration );
+
+	update_user_meta( $user_id, $action , $stored_hash ); // adjust the lifetime of the token. Currently 10 min.
+	update_user_meta( $user_id, $expiration_action , $expiration );
+	return $token;
 }
 
 /**
