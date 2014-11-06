@@ -139,21 +139,21 @@ function wpa_front_end_login(){
 	$sent_link = wpa_send_link($account, $nonce);
 
 	if( $account && !is_wp_error($sent_link) ){
-		echo '<p class="wpa-box wpa-success">'. __('Please check your email. You will soon receive an email with a login link.', 'passwordless') .'</p>';
+		echo '<p class="wpa-box wpa-success">'. apply_filters('wpa_success_link_msg', __('Please check your email. You will soon receive an email with a login link.', 'passwordless') ) .'</p>';
 	} elseif ( is_user_logged_in() ) {
 		$current_user = wp_get_current_user();
-		echo '<p class="wpa-box wpa-alert">'.sprintf(__( 'You are currently logged in as %1$s. %2$s', 'profilebuilder' ), '<a href="'.$authorPostsUrl = get_author_posts_url( $current_user->ID ).'" title="'.$current_user->display_name.'">'.$current_user->display_name.'</a>', '<a href="'.wp_logout_url( $redirectTo = wpa_curpageurl() ).'" title="'.__( 'Log out of this account', 'passwordless' ).'">'. __( 'Log out', 'passwordless').' &raquo;</a>' ) . '</p><!-- .alert-->';
+		echo '<p class="wpa-box wpa-alert">'.apply_filters('wpa_success_login_msg', sprintf(__( 'You are currently logged in as %1$s. %2$s', 'profilebuilder' ), '<a href="'.$authorPostsUrl = get_author_posts_url( $current_user->ID ).'" title="'.$current_user->display_name.'">'.$current_user->display_name.'</a>', '<a href="'.wp_logout_url( $redirectTo = wpa_curpageurl() ).'" title="'.__( 'Log out of this account', 'passwordless' ).'">'. __( 'Log out', 'passwordless').' &raquo;</a>' ) ) . '</p><!-- .alert-->';
 	} else {
 		if ( is_wp_error($sent_link) ){
-			echo '<p class="wpa-box wpa-error">' . $sent_link->get_error_message() . '</p>';
+			echo '<p class="wpa-box wpa-error">' . apply_filters( 'wpa_error', $sent_link->get_error_message() ) . '</p>';
 		}
 		if( $error_token ) {
-			echo '<p class="wpa-box wpa-error">' . __('Your token has probably expired. Please try again.', 'passwordless') . '</p>';
+			echo '<p class="wpa-box wpa-error">' . apply_filters( 'wpa_invalid_token_error', __('Your token has probably expired. Please try again.', 'passwordless') ) . '</p>';
 		}
-	?>
+		?>
 	<form name="wpaloginform" id="wpaloginform" action="" method="post">
 		<p>
-			<label for="user_email_username"><?php _e('Login with email or username') ?></label><br />
+			<label for="user_email_username"><?php _e('Login with email or username') ?></label>
 			<input type="text" name="user_email_username" id="user_email_username" class="input" value="<?php echo esc_attr( $account ); ?>" size="25" />
 			<input type="submit" name="wpa-submit" id="wpa-submit" class="button-primary" value="<?php esc_attr_e('Log In'); ?>" />
 		</p>
