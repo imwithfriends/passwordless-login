@@ -5,7 +5,7 @@ Donate link: http://www.cozmoslabs.com/wordpress-profile-builder/
 Tags: passwordless login, login, front-end login, login shortcode, custom login form, login without password, passwordless authentication
 Requires at least: 3.9
 Tested up to: 4.0
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 
 
 Passwordless login form via a simple to use shortcode: [passwordless-login]
@@ -69,11 +69,12 @@ Thanks go towards Tim Nash for reviewing the plugin from a security point of vie
 
 
 == Changelog ==
-
-= 1.0 =
-Initial version. Added a passwordless login form as a shortcode.
+= 1.0.2 =
+Fix: Added require_once for the PasswordHash class
 = 1.0.1 =
 Security fix: tokens are now hashed in the database.
 Security fix: sanitized the input fields data.
 Fix: no longer using transients. Now using user_meta with an expiration meta since transients are not to be trusted.
 Change: removed a br tag
+= 1.0 =
+Initial version. Added a passwordless login form as a shortcode.
