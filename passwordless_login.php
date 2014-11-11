@@ -270,6 +270,7 @@ function wpa_autologin_via_url(){
 		$arr_params = array( 'uid', 'token', 'nonce' );
 		$current_page_url = remove_query_arg( $arr_params, wpa_curpageurl() );
 
+		require_once( ABSPATH . 'wp-includes/class-phpass.php');
 		$wp_hasher = new PasswordHash(8, TRUE);
 		$time = time();
 
@@ -302,6 +303,8 @@ function wpa_create_onetime_token( $action = -1, $user_id = 0 ) {
 
 	// random salt
 	$key = wp_generate_password( 20, false );
+
+	require_once( ABSPATH . 'wp-includes/class-phpass.php');
 	$wp_hasher = new PasswordHash(8, TRUE);
 	$string = $key . $action . $time;
 
