@@ -3,27 +3,27 @@
 * Plugin Name: Passwordless Login
 * Plugin URI: http://www.cozmsolabs.com
 * Description: Shortcode based login form. Enter an email/username and get link via email that will automatically log you in.
-* Version: 1.0.2
+* Version: 1.0.3
 * Author: Cozmoslabs, sareiodata
 * Author URI: http:/www.cozmoslabs.com
 * License: GPL2
 */
-/* Copyright Cozmoslabs.com 
- 
+/* Copyright Cozmoslabs.com
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License, version 2, as
 published by the Free Software Foundation.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
- 
+
 // Start writing code after this line!
 
 
@@ -153,7 +153,7 @@ function wpa_front_end_login(){
 		?>
 	<form name="wpaloginform" id="wpaloginform" action="" method="post">
 		<p>
-			<label for="user_email_username"><?php _e('Login with email or username') ?></label>
+			<label for="user_email_username"><?php apply_filters('wpa_change_form_label', _e('Login with email or username')); ?></label>
 			<input type="text" name="user_email_username" id="user_email_username" class="input" value="<?php echo esc_attr( $account ); ?>" size="25" />
 			<input type="submit" name="wpa-submit" id="wpa-submit" class="button-primary" value="<?php esc_attr_e('Log In'); ?>" />
 		</p>
@@ -211,10 +211,15 @@ function wpa_send_link( $email_account = false, $nonce = false ){
 		$errors->add('invalid_account', $valid_email->get_error_message());
 	} else{
 		$blog_name = get_bloginfo( 'name' );
+        //Headers to change the content type of the email and the From tag
+        $headers = "MIME-Version: 1.0" . "\r\n";
+        $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+        $headers .= apply_filters('wpa_email_from_tag', 'From: '.$blog_name.' <admin@mail.com>');
+
 		$unique_url = wpa_generate_url( $valid_email , $nonce );
 		$subject = apply_filters('wpa_email_subject', __("Login at $blog_name"));
-		$message = apply_filters('wpa_email_message', __("Login at $blog_name by visiting this url: $unique_url"), $unique_url);
-		$sent_mail = wp_mail( $valid_email, $subject, $message);
+		$message = apply_filters('wpa_email_message', __('Hello ! <br><br>Login at '.$blog_name.' by visiting this url: <a href="'.$unique_url.'" target="_blank">'.$unique_url.'</a>'), $unique_url, $valid_email);
+		$sent_mail = wp_mail( $valid_email, $subject, $message, $headers);
 
 		if ( !$sent_mail ){
 			$errors->add('email_not_sent', __('There was a problem sending your email. Please try again or contact an admin.'));
@@ -246,7 +251,9 @@ function wpa_generate_url( $email = false, $nonce = false ){
 
 	$arr_params = array( 'wpa_error_token', 'uid', 'token', 'nonce' );
 	$url = remove_query_arg( $arr_params, wpa_curpageurl() );
-	$url .= "?uid=$user->ID&token=$token&nonce=$nonce";
+
+    $url_params = array('uid' => $user->ID, 'token' => $token, 'nonce' => $nonce);
+    $url = add_query_arg($url_params, $url);
 
 	return $url;
 }
@@ -310,7 +317,7 @@ function wpa_create_onetime_token( $action = -1, $user_id = 0 ) {
 
 	// we're sending this to the user
 	$token  = wp_hash( $string );
-	$expiration = $time + 60*10;
+	$expiration = apply_filters('wpa_change_link_expiration', $time + 60*10);
 	$expiration_action = $action . '_expiration';
 
 	// we're storing a combination of token and expiration
