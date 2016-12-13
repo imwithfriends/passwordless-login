@@ -150,10 +150,24 @@ function wpa_front_end_login(){
 		if( $error_token ) {
 			echo '<p class="wpa-box wpa-error">' . apply_filters( 'wpa_invalid_token_error', __('Your token has probably expired. Please try again.', 'passwordless') ) . '</p>';
 		}
+
+		//Setting up the label for the password request form based on the Allows Users to Login With Profile Builder Option
+		$wppb_general_options = get_option('wppb_general_settings');
+
+		if ($wppb_general_options !== false) {
+			if ($wppb_general_options['loginWith'] == 'email')
+				$label = 'Login with email<br>';
+			else if ($wppb_general_options['loginWith'] == 'username')
+				$label = 'Login with username<br>';
+			else
+				$label = 'Login with email or username';
+		}
+		else
+			$label = 'Login with email or username';
 		?>
 	<form name="wpaloginform" id="wpaloginform" action="" method="post">
 		<p>
-			<label for="user_email_username"><?php apply_filters('wpa_change_form_label', _e('Login with email or username')); ?></label>
+			<label for="user_email_username"><?php apply_filters('wpa_change_form_label', _e($label)); ?></label>
 			<input type="text" name="user_email_username" id="user_email_username" class="input" value="<?php echo esc_attr( $account ); ?>" size="25" />
 			<input type="submit" name="wpa-submit" id="wpa-submit" class="button-primary" value="<?php esc_attr_e('Log In'); ?>" />
 		</p>
