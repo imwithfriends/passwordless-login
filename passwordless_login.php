@@ -151,16 +151,19 @@ function wpa_front_end_login(){
 			echo '<p class="wpa-box wpa-error">' . apply_filters( 'wpa_invalid_token_error', __('Your token has probably expired. Please try again.', 'passwordless') ) . '</p>';
 		}
 
+		include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 		//Setting up the label for the password request form based on the Allows Users to Login With Profile Builder Option
-		$wppb_general_options = get_option('wppb_general_settings');
+		if (is_plugin_active('profile-builder-pro/index.php') || is_plugin_active('profile-builder/index.php') || is_plugin_active('profile-builder-hobbyist/index.php')) {
+			$wppb_general_options = get_option('wppb_general_settings');
 
-		if ($wppb_general_options !== false) {
-			if ($wppb_general_options['loginWith'] == 'email')
-				$label = 'Login with email<br>';
-			else if ($wppb_general_options['loginWith'] == 'username')
-				$label = 'Login with username<br>';
-			else
-				$label = 'Login with email or username';
+			if ($wppb_general_options !== false) {
+				if ($wppb_general_options['loginWith'] == 'email')
+					$label = 'Login with email<br>';
+				else if ($wppb_general_options['loginWith'] == 'username')
+					$label = 'Login with username<br>';
+				else
+					$label = 'Login with email or username';
+			}
 		}
 		else
 			$label = 'Login with email or username';
