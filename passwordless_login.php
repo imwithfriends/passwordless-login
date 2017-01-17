@@ -3,7 +3,7 @@
 * Plugin Name: Passwordless Login
 * Plugin URI: http://www.cozmsolabs.com
 * Description: Shortcode based login form. Enter an email/username and get link via email that will automatically log you in.
-* Version: 1.0.3
+* Version: 1.0.4
 * Author: Cozmoslabs, sareiodata
 * Author URI: http:/www.cozmoslabs.com
 * License: GPL2
@@ -229,9 +229,7 @@ function wpa_send_link( $email_account = false, $nonce = false ){
 	} else{
 		$blog_name = get_bloginfo( 'name' );
         //Headers to change the content type of the email and the From tag
-        $headers = "MIME-Version: 1.0" . "\r\n";
-        $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-        $headers .= apply_filters('wpa_email_from_tag', 'From: '.$blog_name.' <admin@mail.com>');
+		$headers['Content-Type'] = 'text/html';
 
 		$unique_url = wpa_generate_url( $valid_email , $nonce );
 		$subject = apply_filters('wpa_email_subject', __("Login at $blog_name"));
