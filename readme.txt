@@ -4,8 +4,8 @@ Contributors: sareiodata, cozmoslabs
 Donate link: http://www.cozmoslabs.com/wordpress-profile-builder/
 Tags: passwordless login, passwordless, front-end login, login shortcode, custom login form, login without password, passwordless authentication
 Requires at least: 3.9
-Tested up to: 4.7
-Stable tag: 1.0.4
+Tested up to: 4.7.1
+Stable tag: 1.0.5
 
 
 Passwordless login form via a simple to use shortcode: [passwordless-login]
@@ -51,11 +51,11 @@ Thanks go towards Tim Nash for reviewing the plugin from a security point of vie
 
 = Isn't it more complicated they just entering a password? =
 
-	Weak passwords are used every day by users. There are also people who user the same password across various services and websites. By using the Passwordless Login plugin your users will have one less password to worry about.
+	Weak passwords are used every day by users. There are also people who use the same password across various services and websites. By using the Passwordless Login plugin your users will have one less password to worry about.
 
 = But what if my users don't want to login every time via their email?  =
 
-	You can extend the auth cookie expiration to something like 1 month or 3 months. (currently only possible via code; will be available in a future version). Also, you can offer Passwordless Login as an alternative login system and enforce stronger passwords on registration using <a href="http://wordpress.org/plugins/profile-builder/">Profile Builder plugin.</a>
+	You can extend the auth cookie expiration to something like 1 month or 3 months (this can be changed by using the wpa_change_link_expiration filter). Also, you can offer Passwordless Login as an alternative login system and enforce stronger passwords on registration using <a href="http://wordpress.org/plugins/profile-builder/">Profile Builder plugin.</a>
 
 = I can't find a question similar to my issue; Where can I find support? =
 
@@ -69,21 +69,22 @@ Thanks go towards Tim Nash for reviewing the plugin from a security point of vie
 
 
 == Changelog ==
+= 1.0.5 =
+* Fix: Fixed an issue with the Email Content Type. Now we are using the wp_mail_content_type filter to set this.
 = 1.0.4 =
-Fix: Remove email 'from' filter. Should use wp_mail_from filter.
-Added support for HTML inside the e-mail that gets sent.
-Added the wpa_change_link_expiration filter to be able to change the lifespan of the token
-Added the wpa_email_from_tag filter which changes the From tag in the email headers
-Added the wpa_change_form_label to be able to change the label for the login form. The label also changes automatically now based on the value of the Allow Users to Login With option set in Profile Builder -> Manage Fields.
-Fix: Generating the url using add_query_args() function
+* Fix: Remove email 'from' filter. Should use wp_mail_from filter.
+* Added support for HTML inside the e-mail that gets sent.
+* Added the wpa_change_link_expiration filter to be able to change the lifespan of the token
+* Added the wpa_change_form_label to be able to change the label for the login form. The label also changes automatically now based on the value of the Allow Users to * Login With option set in Profile Builder -> Manage Fields.
+* Fix: Generating the url using add_query_args() function
 = 1.0.3 =
 Fix: Minor readme change
 = 1.0.2 =
 Fix: Added require_once for the PasswordHash class
 = 1.0.1 =
-Security fix: tokens are now hashed in the database.
-Security fix: sanitized the input fields data.
-Fix: no longer using transients. Now using user_meta with an expiration meta since transients are not to be trusted.
-Change: removed a br tag
+* Security fix: tokens are now hashed in the database.
+* Security fix: sanitized the input fields data.
+* Fix: no longer using transients. Now using user_meta with an expiration meta since transients are not to be trusted.
+* Change: removed a br tag
 = 1.0 =
 Initial version. Added a passwordless login form as a shortcode.
