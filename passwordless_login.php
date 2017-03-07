@@ -234,6 +234,7 @@ function wpa_send_link( $email_account = false, $nonce = false ){
 		$errors->add('invalid_account', $valid_email->get_error_message());
 	} else{
 		$blog_name = get_bloginfo( 'name' );
+		$blog_name = esc_attr( $blog_name );
 
 		//Filters to change the content type of the email
 		add_filter('wp_mail_content_type', create_function('', 'return "text/html";'));
