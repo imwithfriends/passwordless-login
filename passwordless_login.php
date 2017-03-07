@@ -234,13 +234,15 @@ function wpa_send_link( $email_account = false, $nonce = false ){
 		$errors->add('invalid_account', $valid_email->get_error_message());
 	} else{
 		$blog_name = get_bloginfo( 'name' );
-        //Headers to change the content type of the email and the From tag
-		$headers['Content-Type'] = 'text/html';
+		//Filters to change the content type of the email
+		add_filter('wp_mail_content_type', create_function('', 'return "text/html";'));
 
 		$unique_url = wpa_generate_url( $valid_email , $nonce );
 		$subject = apply_filters('wpa_email_subject', __("Login at $blog_name"));
 		$message = apply_filters('wpa_email_message', __('Hello ! <br><br>Login at '.$blog_name.' by visiting this url: <a href="'.$unique_url.'" target="_blank">'.$unique_url.'</a>'), $unique_url, $valid_email);
-		$sent_mail = wp_mail( $valid_email, $subject, $message, $headers);
+		$sent_mail = wp_mail( $valid_email, $subject, $message );
+
+		remove_filter( 'wp_mail_content_type', create_function('', 'return "text/html";'));
 
 		if ( !$sent_mail ){
 			$errors->add('email_not_sent', __('There was a problem sending your email. Please try again or contact an admin.'));
