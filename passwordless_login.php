@@ -197,18 +197,24 @@ add_filter('widget_text', 'do_shortcode');
  * @return bool / WP_Error
  */
 function wpa_valid_account( $account ){
+	if( is_email( $account ) ) {
+		$account = sanitize_email( $account );
+	} else {
+		$account = sanitize_user( $account );
+	}
 
-	if( is_email($account) && email_exists( $account ) ){
+	if( is_email( $account ) && email_exists( $account ) ) {
 		return $account;
 	}
 
-	if( !is_email( $account ) && username_exists( $account ) ){
-		$user = get_user_by('login', $account);
-		if($user){
+	if( ! is_email( $account ) && username_exists( $account ) ) {
+		$user = get_user_by( 'login', $account );
+		if( $user ) {
 			return $user->data->user_email;
 		}
 	}
-	return new WP_Error( 'invalid_account', __( "The username or email you provided do not exit. Please try again.", "passwordless" ) );
+
+	return new WP_Error( 'invalid_account', __( "The username or email you provided do not exist. Please try again.", "passwordless" ) );
 }
 
 /**
@@ -363,6 +369,8 @@ function wpa_curpageurl() {
 
 	else
 		$pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
+
+	$pageURL = esc_url_raw( $pageURL );
 
 	return $pageURL;
 }
