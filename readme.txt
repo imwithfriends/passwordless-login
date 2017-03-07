@@ -4,7 +4,7 @@ Contributors: sareiodata, cozmoslabs
 Donate link: http://www.cozmoslabs.com/wordpress-profile-builder/
 Tags: passwordless login, passwordless, front-end login, login shortcode, custom login form, login without password, passwordless authentication
 Requires at least: 3.9
-Tested up to: 4.7.1
+Tested up to: 4.7.3
 Stable tag: 1.0.5
 
 
@@ -63,28 +63,36 @@ Thanks go towards Tim Nash for reviewing the plugin from a security point of vie
 
 
 == Screenshots ==
+
 1. Front End Passwordless Login Form
 2. Received Email with the token link
 3. Backend Info page for the plugin
 
 
 == Changelog ==
+
 = 1.0.5 =
 * Fix: Fixed an issue with the Email Content Type. Now we are using the wp_mail_content_type filter to set this.
+* Plugin security improvements.
+
 = 1.0.4 =
 * Fix: Remove email 'from' filter. Should use wp_mail_from filter.
 * Added support for HTML inside the e-mail that gets sent.
-* Added the wpa_change_link_expiration filter to be able to change the lifespan of the token
+* Added the wpa_change_link_expiration filter to be able to change the lifespan of the token.
 * Added the wpa_change_form_label to be able to change the label for the login form. The label also changes automatically now based on the value of the Allow Users to * Login With option set in Profile Builder -> Manage Fields.
-* Fix: Generating the url using add_query_args() function
+* Fix: Generating the url using add_query_args() function.
+
 = 1.0.3 =
 Fix: Minor readme change
+
 = 1.0.2 =
 Fix: Added require_once for the PasswordHash class
+
 = 1.0.1 =
 * Security fix: tokens are now hashed in the database.
 * Security fix: sanitized the input fields data.
 * Fix: no longer using transients. Now using user_meta with an expiration meta since transients are not to be trusted.
-* Change: removed a br tag
+* Change: removed a br tag.
+
 = 1.0 =
 Initial version. Added a passwordless login form as a shortcode.

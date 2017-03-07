@@ -3,7 +3,7 @@
 * Plugin Name: Passwordless Login
 * Plugin URI: http://www.cozmsolabs.com
 * Description: Shortcode based login form. Enter an email/username and get link via email that will automatically log you in.
-* Version: 1.0.4
+* Version: 1.0.5
 * Author: Cozmoslabs, sareiodata
 * Author URI: http:/www.cozmoslabs.com
 * License: GPL2
@@ -32,7 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  *
  *
  */
-define( 'PASSWORDLESS_LOGIN_VERSION', '1.0' );
+define( 'PASSWORDLESS_LOGIN_VERSION', '1.0.5' );
 define( 'WPA_PLUGIN_DIR', WP_PLUGIN_DIR . '/' . dirname( plugin_basename( __FILE__ ) ) );
 define( 'WPA_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'WPA_TRANSLATE_DIR', WPA_PLUGIN_DIR.'/translation' );
@@ -234,6 +234,7 @@ function wpa_send_link( $email_account = false, $nonce = false ){
 		$errors->add('invalid_account', $valid_email->get_error_message());
 	} else{
 		$blog_name = get_bloginfo( 'name' );
+
 		//Filters to change the content type of the email
 		add_filter('wp_mail_content_type', create_function('', 'return "text/html";'));
 
@@ -241,8 +242,6 @@ function wpa_send_link( $email_account = false, $nonce = false ){
 		$subject = apply_filters('wpa_email_subject', __("Login at $blog_name"));
 		$message = apply_filters('wpa_email_message', __('Hello ! <br><br>Login at '.$blog_name.' by visiting this url: <a href="'.$unique_url.'" target="_blank">'.$unique_url.'</a>'), $unique_url, $valid_email);
 		$sent_mail = wp_mail( $valid_email, $subject, $message );
-
-		remove_filter( 'wp_mail_content_type', create_function('', 'return "text/html";'));
 
 		if ( !$sent_mail ){
 			$errors->add('email_not_sent', __('There was a problem sending your email. Please try again or contact an admin.'));
