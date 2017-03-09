@@ -30,7 +30,6 @@ You can use the shortcode [passwordless-login] in a page or widget.
 NOTE:
 
 Passwordless Authentication dose not replace the default login functionality in WordPress.
-Thanks go towards Tim Nash for reviewing the plugin from a security point of view. https://timnash.co.uk/
 
 
 == Installation ==
