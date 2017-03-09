@@ -241,7 +241,7 @@ function wpa_send_link( $email_account = false, $nonce = false ){
 
 		$unique_url = wpa_generate_url( $valid_email , $nonce );
 		$subject = apply_filters('wpa_email_subject', __("Login at $blog_name"));
-		$message = apply_filters('wpa_email_message', __('Hello ! <br><br>Login at '.$blog_name.' by visiting this url: <a href="'.$unique_url.'" target="_blank">'.$unique_url.'</a>'), $unique_url, $valid_email);
+		$message = apply_filters('wpa_email_message', __('Hello ! <br><br>Login at '.$blog_name.' by visiting this url: <a href="'. esc_url( $unique_url ) .'" target="_blank">'. esc_url( $unique_url ) .'</a>'), $unique_url, $valid_email);
 		$sent_mail = wp_mail( $valid_email, $subject, $message );
 
 		if ( !$sent_mail ){
