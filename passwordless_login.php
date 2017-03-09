@@ -3,7 +3,7 @@
 * Plugin Name: Passwordless Login
 * Plugin URI: http://www.cozmsolabs.com
 * Description: Shortcode based login form. Enter an email/username and get link via email that will automatically log you in.
-* Version: 1.0.4
+* Version: 1.0.5
 * Author: Cozmoslabs, sareiodata
 * Author URI: http:/www.cozmoslabs.com
 * License: GPL2
@@ -32,7 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  *
  *
  */
-define( 'PASSWORDLESS_LOGIN_VERSION', '1.0' );
+define( 'PASSWORDLESS_LOGIN_VERSION', '1.0.5' );
 define( 'WPA_PLUGIN_DIR', WP_PLUGIN_DIR . '/' . dirname( plugin_basename( __FILE__ ) ) );
 define( 'WPA_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'WPA_TRANSLATE_DIR', WPA_PLUGIN_DIR.'/translation' );
@@ -197,18 +197,24 @@ add_filter('widget_text', 'do_shortcode');
  * @return bool / WP_Error
  */
 function wpa_valid_account( $account ){
+	if( is_email( $account ) ) {
+		$account = sanitize_email( $account );
+	} else {
+		$account = sanitize_user( $account );
+	}
 
-	if( is_email($account) && email_exists( $account ) ){
+	if( is_email( $account ) && email_exists( $account ) ) {
 		return $account;
 	}
 
-	if( !is_email( $account ) && username_exists( $account ) ){
-		$user = get_user_by('login', $account);
-		if($user){
+	if( ! is_email( $account ) && username_exists( $account ) ) {
+		$user = get_user_by( 'login', $account );
+		if( $user ) {
 			return $user->data->user_email;
 		}
 	}
-	return new WP_Error( 'invalid_account', __( "The username or email you provided do not exit. Please try again.", "passwordless" ) );
+
+	return new WP_Error( 'invalid_account', __( "The username or email you provided do not exist. Please try again.", "passwordless" ) );
 }
 
 /**
@@ -228,15 +234,15 @@ function wpa_send_link( $email_account = false, $nonce = false ){
 		$errors->add('invalid_account', $valid_email->get_error_message());
 	} else{
 		$blog_name = get_bloginfo( 'name' );
+		$blog_name = esc_attr( $blog_name );
+
 		//Filters to change the content type of the email
 		add_filter('wp_mail_content_type', create_function('', 'return "text/html";'));
 
 		$unique_url = wpa_generate_url( $valid_email , $nonce );
 		$subject = apply_filters('wpa_email_subject', __("Login at $blog_name"));
-		$message = apply_filters('wpa_email_message', __('Hello ! <br><br>Login at '.$blog_name.' by visiting this url: <a href="'.$unique_url.'" target="_blank">'.$unique_url.'</a>'), $unique_url, $valid_email);
+		$message = apply_filters('wpa_email_message', __('Hello ! <br><br>Login at '.$blog_name.' by visiting this url: <a href="'. esc_url( $unique_url ) .'" target="_blank">'. esc_url( $unique_url ) .'</a>'), $unique_url, $valid_email);
 		$sent_mail = wp_mail( $valid_email, $subject, $message );
-
-		remove_filter( 'wp_mail_content_type', create_function('', 'return "text/html";'));
 
 		if ( !$sent_mail ){
 			$errors->add('email_not_sent', __('There was a problem sending your email. Please try again or contact an admin.'));
@@ -365,6 +371,8 @@ function wpa_curpageurl() {
 
 	else
 		$pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
+
+	$pageURL = esc_url_raw( $pageURL );
 
 	return $pageURL;
 }
