@@ -7,6 +7,8 @@
 * Author: Cozmoslabs, sareiodata
 * Author URI: http:/www.cozmoslabs.com
 * License: GPL2
+* Text Domain: passwordless
+* Domain Path: /languages
 */
 /* Copyright Cozmoslabs.com
 
@@ -32,10 +34,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  *
  *
  */
-define( 'PASSWORDLESS_LOGIN_VERSION', '1.0.5' );
+define( 'PASSWORDLESS_LOGIN_VERSION', '1.0.6' );
 define( 'WPA_PLUGIN_DIR', WP_PLUGIN_DIR . '/' . dirname( plugin_basename( __FILE__ ) ) );
 define( 'WPA_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-define( 'WPA_TRANSLATE_DIR', WPA_PLUGIN_DIR.'/translation' );
+define( 'WPA_TRANSLATE_DIR', WPA_PLUGIN_DIR.'/languages' );
 define( 'WPA_TRANSLATE_DOMAIN', 'passwordless' );
 
 /**
@@ -46,7 +48,7 @@ define( 'WPA_TRANSLATE_DOMAIN', 'passwordless' );
  * @return void
  */
 function wpa_load_plugin_textdomain(){
-    load_plugin_textdomain( 'passwordless', false, WPA_PLUGIN_URL . '/translation/' );
+    load_plugin_textdomain( 'passwordless', false, WPA_PLUGIN_URL . '/languages/' );
 }
 add_action('init', 'wpa_load_plugin_textdomain');
 
@@ -183,7 +185,7 @@ function wpa_front_end_login(){
 		?>
 	<form name="wpaloginform" id="wpaloginform" action="" method="post">
 		<p>
-			<label for="user_email_username"><?php apply_filters('wpa_change_form_label', $label); ?></label>
+			<label for="user_email_username"><?php echo( apply_filters('wpa_change_form_label', $label)) ; ?></label>
 			<input type="text" name="user_email_username" id="user_email_username" class="input" value="<?php echo esc_attr( $account ); ?>" size="25" />
 			<input type="submit" name="wpa-submit" id="wpa-submit" class="button-primary" value="<?php esc_attr_e('Log In'); ?>" />
 		</p>
@@ -372,22 +374,17 @@ function wpa_create_onetime_token( $action = -1, $user_id = 0 ) {
  * @return string
  */
 function wpa_curpageurl() {
-	$pageURL = 'http';
+    $req_uri = $_SERVER['REQUEST_URI'];
 
-	if ((isset($_SERVER["HTTPS"])) && ($_SERVER["HTTPS"] == "on"))
-		$pageURL .= "s";
+    $home_path = trim( parse_url( home_url(), PHP_URL_PATH ), '/' );
+    $home_path_regex = sprintf( '|^%s|i', preg_quote( $home_path, '|' ) );
 
-	$pageURL .= "://";
+    // Trim path info from the end and the leading home path from the front.
+    $req_uri = ltrim($req_uri, '/');
+    $req_uri = preg_replace( $home_path_regex, '', $req_uri );
+    $req_uri = trim(home_url(), '/') . '/' . ltrim( $req_uri, '/' );
 
-	if ($_SERVER["SERVER_PORT"] != "80")
-		$pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
-
-	else
-		$pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
-
-	$pageURL = esc_url_raw( $pageURL );
-
-	return $pageURL;
+    return $req_uri;
 }
 
 
