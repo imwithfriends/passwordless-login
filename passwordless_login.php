@@ -3,7 +3,7 @@
 * Plugin Name: Passwordless Login
 * Plugin URI: http://www.cozmsolabs.com
 * Description: Shortcode based login form. Enter an email/username and get link via email that will automatically log you in.
-* Version: 1.0.5
+* Version: 1.0.6
 * Author: Cozmoslabs, sareiodata
 * Author URI: http:/www.cozmoslabs.com
 * License: GPL2
@@ -39,6 +39,19 @@ define( 'WPA_TRANSLATE_DIR', WPA_PLUGIN_DIR.'/translation' );
 define( 'WPA_TRANSLATE_DOMAIN', 'passwordless' );
 
 /**
+ * Function that initiates the plugin text domain
+ *
+ * @since v.1.0.6
+ *
+ * @return void
+ */
+function wpa_load_plugin_textdomain(){
+    load_plugin_textdomain( 'passwordless', false, WPA_PLUGIN_URL . '/translation/' );
+}
+add_action('init', 'wpa_load_plugin_textdomain');
+
+
+/**
  * Function that creates the "Basic Information" submenu page
  *
  * @since v.2.0
@@ -60,7 +73,7 @@ add_action( 'admin_menu', 'wpa_register_basic_info_submenu_page', 2 );
 function wpa_basic_info_content() {
 ?>
 	<div class="wrap wpa-wrap wpa-info-wrap">
-		<div class="wpa-badge <?php echo PASSWORDLESS_LOGIN_VERSION; ?>"><?php printf( __( 'Version %s' ), PASSWORDLESS_LOGIN_VERSION ); ?></div>
+		<div class="wpa-badge <?php echo PASSWORDLESS_LOGIN_VERSION; ?>"><?php printf( __( 'Version %s', 'passwordless' ), PASSWORDLESS_LOGIN_VERSION ); ?></div>
 		<h1><?php printf( __( '<strong>Passwordless Login</strong> <small>v.</small>%s', 'passwordless' ), PASSWORDLESS_LOGIN_VERSION ); ?></h1>
 		<p class="wpa-info-text"><?php printf( __( 'A front-end login form without a password.', 'passwordless' ) ); ?></p>
 		<p><strong style="font-size: 30px; vertical-align: middle; color:#d54e21;"><?php echo get_option('wpa_total_logins', '0'); ?></strong> successful logins without passwords.</p>
@@ -142,7 +155,7 @@ function wpa_front_end_login(){
 		echo '<p class="wpa-box wpa-success">'. apply_filters('wpa_success_link_msg', __('Please check your email. You will soon receive an email with a login link.', 'passwordless') ) .'</p>';
 	} elseif ( is_user_logged_in() ) {
 		$current_user = wp_get_current_user();
-		echo '<p class="wpa-box wpa-alert">'.apply_filters('wpa_success_login_msg', sprintf(__( 'You are currently logged in as %1$s. %2$s', 'profilebuilder' ), '<a href="'.$authorPostsUrl = get_author_posts_url( $current_user->ID ).'" title="'.$current_user->display_name.'">'.$current_user->display_name.'</a>', '<a href="'.wp_logout_url( $redirectTo = wpa_curpageurl() ).'" title="'.__( 'Log out of this account', 'passwordless' ).'">'. __( 'Log out', 'passwordless').' &raquo;</a>' ) ) . '</p><!-- .alert-->';
+		echo '<p class="wpa-box wpa-alert">'.apply_filters('wpa_success_login_msg', sprintf(__( 'You are currently logged in as %1$s. %2$s', 'passwordless' ), '<a href="'.$authorPostsUrl = get_author_posts_url( $current_user->ID ).'" title="'.$current_user->display_name.'">'.$current_user->display_name.'</a>', '<a href="'.wp_logout_url( $redirectTo = wpa_curpageurl() ).'" title="'.__( 'Log out of this account', 'passwordless' ).'">'. __( 'Log out', 'passwordless').' &raquo;</a>' ) ) . '</p><!-- .alert-->';
 	} else {
 		if ( is_wp_error($sent_link) ){
 			echo '<p class="wpa-box wpa-error">' . apply_filters( 'wpa_error', $sent_link->get_error_message() ) . '</p>';
@@ -158,19 +171,19 @@ function wpa_front_end_login(){
 
 			if ($wppb_general_options !== false) {
 				if ($wppb_general_options['loginWith'] == 'email')
-					$label = 'Login with email<br>';
+					$label = __('Login with email', 'passwordless') . '<br>';
 				else if ($wppb_general_options['loginWith'] == 'username')
-					$label = 'Login with username<br>';
+					$label = __('Login with username', 'passwordless') . '<br>';
 				else
-					$label = 'Login with email or username';
+					$label = __('Login with email or username', 'passwordless');
 			}
 		}
 		else
-			$label = 'Login with email or username';
+			$label = __('Login with email or username', 'passwordless');
 		?>
 	<form name="wpaloginform" id="wpaloginform" action="" method="post">
 		<p>
-			<label for="user_email_username"><?php apply_filters('wpa_change_form_label', _e($label)); ?></label>
+			<label for="user_email_username"><?php apply_filters('wpa_change_form_label', $label); ?></label>
 			<input type="text" name="user_email_username" id="user_email_username" class="input" value="<?php echo esc_attr( $account ); ?>" size="25" />
 			<input type="submit" name="wpa-submit" id="wpa-submit" class="button-primary" value="<?php esc_attr_e('Log In'); ?>" />
 		</p>
@@ -240,12 +253,12 @@ function wpa_send_link( $email_account = false, $nonce = false ){
 		add_filter('wp_mail_content_type', create_function('', 'return "text/html";'));
 
 		$unique_url = wpa_generate_url( $valid_email , $nonce );
-		$subject = apply_filters('wpa_email_subject', __("Login at $blog_name"));
-		$message = apply_filters('wpa_email_message', __('Hello ! <br><br>Login at '.$blog_name.' by visiting this url: <a href="'. esc_url( $unique_url ) .'" target="_blank">'. esc_url( $unique_url ) .'</a>'), $unique_url, $valid_email);
+		$subject = apply_filters('wpa_email_subject', sprintf(__("Login at %s", 'passwordless'), $blog_name));
+		$message = apply_filters('wpa_email_message', sprintf(__('Hello ! <br><br>Login at %s by visiting this url: <a href="%s" target="_blank">%s</a>', 'passwordless'),$blog_name, esc_url($unique_url), esc_url($unique_url)),$unique_url, $valid_email);
 		$sent_mail = wp_mail( $valid_email, $subject, $message );
 
 		if ( !$sent_mail ){
-			$errors->add('email_not_sent', __('There was a problem sending your email. Please try again or contact an admin.'));
+			$errors->add('email_not_sent', __('There was a problem sending your email. Please try again or contact an admin.', 'passwordless'));
 		}
 	}
 	$error_codes = $errors->get_error_codes();
@@ -389,6 +402,6 @@ function wpa_curpageurl() {
 include_once("inc/wpa.class.notices.php");
 $learn_more_notice = new WPA_Add_Notices(
 	'wpa_learn_more',
-	sprintf( __( '<p>Use [passwordless-login] shortcode in your pages or widgets. %1$sLearn more.%2$s  %3$sDismiss%4$s</p>', 'profilebuilder'), "<a href='users.php?page=passwordless-login&wpa_learn_more_dismiss_notification=0'>", "</a>", "<a href='". add_query_arg( 'wpa_learn_more_dismiss_notification', '0' ) ."' class='wpa-dismiss-notification' style='float:right;margin-left:20px;'> ", "</a>" ),
+	sprintf( __( '<p>Use [passwordless-login] shortcode in your pages or widgets. %1$sLearn more.%2$s  %3$sDismiss%4$s</p>', 'passwordless'), "<a href='users.php?page=passwordless-login&wpa_learn_more_dismiss_notification=0'>", "</a>", "<a href='". add_query_arg( 'wpa_learn_more_dismiss_notification', '0' ) ."' class='wpa-dismiss-notification' style='float:right;margin-left:20px;'> ", "</a>" ),
 	'updated',	'',	''
 );
