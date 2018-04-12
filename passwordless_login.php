@@ -3,7 +3,7 @@
 * Plugin Name: Passwordless Login
 * Plugin URI: http://www.cozmsolabs.com
 * Description: Shortcode based login form. Enter an email/username and get link via email that will automatically log you in.
-* Version: 1.0.6
+* Version: 1.0.7
 * Author: Cozmoslabs, sareiodata
 * Author URI: http:/www.cozmoslabs.com
 * License: GPL2
@@ -34,7 +34,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  *
  *
  */
-define( 'PASSWORDLESS_LOGIN_VERSION', '1.0.6' );
+define( 'PASSWORDLESS_LOGIN_VERSION', '1.0.7' );
 define( 'WPA_PLUGIN_DIR', WP_PLUGIN_DIR . '/' . dirname( plugin_basename( __FILE__ ) ) );
 define( 'WPA_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
