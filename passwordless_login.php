@@ -148,6 +148,7 @@ function wpa_front_end_login(){
 	$account = ( isset( $_POST['user_email_username']) ) ? $account = sanitize_text_field( $_POST['user_email_username'] ) : false;
 	$nonce = ( isset( $_POST['nonce']) ) ? $nonce = sanitize_key( $_POST['nonce'] ) : false;
 	$error_token = ( isset( $_GET['wpa_error_token']) ) ? $error_token = sanitize_key( $_GET['wpa_error_token'] ) : false;
+	$adminapp_error = ( isset( $_GET['wpa_adminapp_error']) ) ? sanitize_key( $_GET['wpa_adminapp_error'] ) : false;
 
 	$sent_link = wpa_send_link($account, $nonce);
 
@@ -163,7 +164,9 @@ function wpa_front_end_login(){
 		if( $error_token ) {
 			echo '<p class="wpa-box wpa-error">' . apply_filters( 'wpa_invalid_token_error', __('Your token has probably expired. Please try again.', 'passwordless-login') ) . '</p>';
 		}
-
+        if( $adminapp_error ) {//admin approval compatibility
+            echo '<p class="wpa-box wpa-error">' . apply_filters( 'wpa_admin_approval_error', __('Your account needs to be approved by an admin before you can log-in.', 'passwordless-login') ) . '</p>';
+        }
 		include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 		//Setting up the label for the password request form based on the Allows Users to Login With Profile Builder Option
 		if (is_plugin_active('profile-builder-pro/index.php') || is_plugin_active('profile-builder/index.php') || is_plugin_active('profile-builder-hobbyist/index.php')) {
@@ -320,7 +323,11 @@ function wpa_autologin_via_url(){
 		if ( ! $wp_hasher->CheckPassword($token . $hash_meta_expiration, $hash_meta) || $hash_meta_expiration < $time || ! wp_verify_nonce( $nonce, 'wpa_passwordless_login_request' ) ){
 			wp_redirect( $current_page_url . '?wpa_error_token=true' );
 			exit;
-		} else {
+		}if ( wp_get_object_terms( $uid, 'user_status' ) ){//admin approval compatibility
+            wp_redirect( $current_page_url . '?wpa_adminapp_error=true' );
+            exit;
+        }
+		else {
 			wp_set_auth_cookie( $uid );
 			delete_user_meta($uid, 'wpa_' . $uid );
 			delete_user_meta($uid, 'wpa_' . $uid . '_expiration');
