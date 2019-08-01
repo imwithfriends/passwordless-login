@@ -323,7 +323,7 @@ function wpa_autologin_via_url(){
 		if ( ! $wp_hasher->CheckPassword($token . $hash_meta_expiration, $hash_meta) || $hash_meta_expiration < $time || ! wp_verify_nonce( $nonce, 'wpa_passwordless_login_request' ) ){
 			wp_redirect( $current_page_url . '?wpa_error_token=true' );
 			exit;
-		}if ( wp_get_object_terms( $uid, 'user_status' ) ){//admin approval compatibility
+		}else if ( wp_get_object_terms( $uid, 'user_status' ) ){//admin approval compatibility
             wp_redirect( $current_page_url . '?wpa_adminapp_error=true' );
             exit;
         }
