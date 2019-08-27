@@ -5,7 +5,7 @@ Donate link: http://www.cozmoslabs.com/wordpress-profile-builder/
 Tags: passwordless login, passwordless, front-end login, login shortcode, custom login form, login without password, passwordless authentication
 Requires at least: 3.9
 Tested up to: 5.2.2
-Stable tag: 1.0.8
+Stable tag: 1.0.9
 
 
 Passwordless login form via a simple to use shortcode: [passwordless-login]
@@ -69,6 +69,8 @@ Passwordless Authentication dose not replace the default login functionality in 
 
 
 == Changelog ==
+= 1.0.9 =
+* Fixed a problem with admin approval error message
 
 = 1.0.8 =
 * Added compatibility with Admin Approval from Profile Builder
