@@ -1,20 +1,18 @@
 {
-    "name": "imwithfriends/passwordless-login",
-    "description": "Passwordless login for WordPress",
+	"name": "imwithfriends/passwordless-login",
+	"description": "Passwordless login for WordPress",
 	"type": "wordpress-plugin",
-	"version": "1.0.10",
-    "license": "GPL2",
-    "authors": [
-		{
-            "name": "Cozmoslabs",
+	"license": "GPL2",
+	"authors": [{
+			"name": "Cozmoslabs",
 			"email": "https://www.cozmoslabs.com/",
 			"role": "Maintainer"
-        },
-        {
-            "name": "Im With Friends",
+		},
+		{
+			"name": "Im With Friends",
 			"email": "studio@imwithfriends.se",
 			"role": "Composer Repository maintainer"
-        }
-    ],
-    "require": {}
+		}
+	],
+	"require": {}
 }
