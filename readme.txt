@@ -1,3 +1,6 @@
+This is a temporary fork of Passwordless Login.
+Minor bugfixes awaiting the main plugin to get updated.
+
 === Passwordless Login ===
 
 Contributors: sareiodata, cozmoslabs
