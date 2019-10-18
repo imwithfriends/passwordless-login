@@ -72,6 +72,11 @@ Passwordless Authentication dose not replace the default login functionality in 
 
 
 == Changelog ==
+
+= 1.0.10 =
+* Add text domain to login button
+* Improve support of Wordpress Codings Standards (WIP)
+
 = 1.0.9 =
 * Fixed a problem with admin approval error message
 
