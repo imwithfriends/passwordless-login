@@ -188,7 +188,7 @@ function wpa_front_end_login() {
 		<p>
 			<label for="user_email_username"><?php echo( apply_filters( 'wpa_change_form_label', $label ) ); ?></label>
 			<input type="text" name="user_email_username" id="user_email_username" class="input" value="<?php echo esc_attr( $account ); ?>" size="25" />
-			<input type="submit" name="wpa-submit" id="wpa-submit" class="button-primary" value="<?php esc_attr_e( 'Log In' ); ?>" />
+			<input type="submit" name="wpa-submit" id="wpa-submit" class="button-primary" value="<?php esc_attr_e( 'Log In', 'passwordless-login' ); ?>" />
 		</p>
 		<?php do_action( 'wpa_login_form' ); ?>
 		<?php wp_nonce_field( 'wpa_passwordless_login_request', 'nonce', false ); ?>
